@@ -7,7 +7,15 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-app.config['JSON_AS_ASCII'] = False  # 支援中文 JSON 響應
+app.config['JSON_AS_ASCII'] = False
+
+# 添加 CORS 支援
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    return response
 
 # 從環境變數獲取 API key
 API_KEY = os.getenv('GEMINI_API_KEY')
