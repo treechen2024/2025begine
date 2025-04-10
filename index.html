@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Gemini 內容產生器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gemini 內容產生器</h2>
+        <div>
+            <label for="prompt">輸入提示語：</label>
+            <textarea id="prompt" rows="5"></textarea>
+        </div>
+        <div class="button-group">
+            <button onclick="generateContent()">產生內容</button>
+            <button onclick="saveResult()">儲存為 TXT</button>
+            <button onclick="document.getElementById('prompt').value = ''">繼續</button>
+        </div>
+        <div>
+            <label for="result">產生結果：</label>
+            <textarea id="result" rows="10" readonly></textarea>
+        </div>
+        <div id="error"></div>
+    </div>
+
+    <script>
+        async function generateContent() {
+            const prompt = document.getElementById('prompt').value.trim();
+            const errorDiv = document.getElementById('error');
+            const resultArea = document.getElementById('result');
+
+            if (!prompt) {
+                errorDiv.textContent = '請輸入提示語！';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultArea.value = data.result;
+                    errorDiv.style.display = 'none';
+                } else {
+                    errorDiv.textContent = data.error;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = '發生錯誤，請稍後再試';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function saveResult() {
+            const result = document.getElementById('result').value;
+            if (!result.trim()) {
+                document.getElementById('error').textContent = '沒有內容可供儲存！';
+                document.getElementById('error').style.display = 'block';
+                return;
+            }
+
+            const blob = new Blob([result], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gemini_result.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
