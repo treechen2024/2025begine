@@ -37,9 +37,22 @@
         button:hover {
             background-color: #45a049;
         }
-        #error {
-            color: red;
+        #loading {
             display: none;
+            color: #666;
+            margin: 10px 0;
+        }
+        #error {
+            color: #ff4444;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .disabled {
+            background-color: #cccccc !important;
+            cursor: not-allowed !important;
         }
     </style>
 </head>
@@ -48,13 +61,14 @@
         <h2>Gemini 內容產生器</h2>
         <div>
             <label for="prompt">輸入提示語：</label>
-            <textarea id="prompt" rows="5"></textarea>
+            <textarea id="prompt" rows="5" placeholder="請輸入您想要生成的內容描述..."></textarea>
         </div>
         <div class="button-group">
-            <button onclick="generateContent()">產生內容</button>
-            <button onclick="saveResult()">儲存為 TXT</button>
-            <button onclick="document.getElementById('prompt').value = ''">繼續</button>
+            <button id="generateBtn" onclick="generateContent()">產生內容</button>
+            <button id="saveBtn" onclick="saveResult()">儲存為 TXT</button>
+            <button onclick="clearPrompt()">繼續</button>
         </div>
+        <div id="loading">正在生成內容，請稍候...</div>
         <div>
             <label for="result">產生結果：</label>
             <textarea id="result" rows="10" readonly></textarea>
@@ -63,16 +77,29 @@
     </div>
 
     <script>
+        function clearPrompt() {
+            document.getElementById('prompt').value = '';
+            document.getElementById('error').style.display = 'none';
+        }
+
         async function generateContent() {
-            const prompt = document.getElementById('prompt').value.trim();
+            const generateBtn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
             const errorDiv = document.getElementById('error');
             const resultArea = document.getElementById('result');
+            const prompt = document.getElementById('prompt').value.trim();
 
             if (!prompt) {
                 errorDiv.textContent = '請輸入提示語！';
                 errorDiv.style.display = 'block';
                 return;
             }
+
+            // Disable button and show loading
+            generateBtn.disabled = true;
+            generateBtn.classList.add('disabled');
+            loading.style.display = 'block';
+            errorDiv.style.display = 'none';
 
             try {
                 const response = await fetch('/generate', {
@@ -95,6 +122,11 @@
             } catch (error) {
                 errorDiv.textContent = '發生錯誤，請稍後再試';
                 errorDiv.style.display = 'block';
+            } finally {
+                // Re-enable button and hide loading
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('disabled');
+                loading.style.display = 'none';
             }
         }
 
