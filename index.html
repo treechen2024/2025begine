@@ -12,7 +12,8 @@
     <div class="container">
         <h1>TXT 轉 PPT 工具</h1>
         
-        <form id="convertForm">
+        <!-- 修改表單，移除默認提交行為 -->
+        <form id="convertForm" onsubmit="return false;">
             <div class="form-group">
                 <label for="txtFile">輸入 TXT 檔案：</label>
                 <input type="file" id="txtFile" name="txtFile" accept=".txt" required>
@@ -31,7 +32,8 @@
             </div>
             
             <div class="form-group">
-                <button type="submit" id="convertBtn">轉換</button>
+                <!-- 將按鈕類型改為 button -->
+                <button type="button" id="convertBtn">轉換</button>
             </div>
         </form>
         
