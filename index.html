@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TXT 轉 PPT 工具</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入 PptxGenJS 庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.11.0/dist/pptxgen.bundle.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>TXT 轉 PPT 工具</h1>
         
-        <form id="convertForm" action="/convert" method="post" enctype="multipart/form-data">
+        <form id="convertForm">
             <div class="form-group">
                 <label for="txtFile">輸入 TXT 檔案：</label>
                 <input type="file" id="txtFile" name="txtFile" accept=".txt" required>
@@ -47,8 +49,13 @@
                 <li>請確保 TXT 檔案使用 UTF-8 編碼</li>
             </ul>
         </div>
+        
+        <footer>
+            <p>此工具在瀏覽器中運行，您的檔案不會上傳到任何伺服器</p>
+            <p><a href="https://github.com/2025begine/txt-to-ppt" target="_blank">查看原始碼</a></p>
+        </footer>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
