@@ -17,14 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
     fontColorPreview.style.backgroundColor = fontColor.value;
     bgColorPreview.style.backgroundColor = bgColor.value;
     
-    // 表單提交處理
-    const convertForm = document.getElementById('convertForm');
+    // 轉換按鈕點擊處理
+    const convertBtn = document.getElementById('convertBtn');
     const resultDiv = document.getElementById('result');
     const downloadLink = document.getElementById('downloadLink');
     
-    convertForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
+    // 改為按鈕點擊事件而非表單提交
+    convertBtn.addEventListener('click', function() {
         const txtFile = document.getElementById('txtFile').files[0];
         if (!txtFile) {
             alert('請選擇 TXT 檔案');
@@ -34,9 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const fontColorValue = hexToRgb(fontColor.value);
         const bgColorValue = hexToRgb(bgColor.value);
         
-        const submitBtn = document.getElementById('convertBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = '處理中...';
+        convertBtn.disabled = true;
+        convertBtn.textContent = '處理中...';
         
         // 讀取 TXT 檔案
         const reader = new FileReader();
@@ -59,15 +57,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('生成 PPT 時發生錯誤: ' + error.message);
                 })
                 .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '轉換';
+                    convertBtn.disabled = false;
+                    convertBtn.textContent = '轉換';
                 });
         };
         
         reader.onerror = function() {
             alert('讀取檔案時發生錯誤');
-            submitBtn.disabled = false;
-            submitBtn.textContent = '轉換';
+            convertBtn.disabled = false;
+            convertBtn.textContent = '轉換';
         };
         
         reader.readAsText(txtFile, 'UTF-8');
